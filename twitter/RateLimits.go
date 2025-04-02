@@ -1,8 +1,8 @@
 package twitter
 
 import (
-	"dmarchiver/logger"
-	"dmarchiver/utils"
+	"XDMArchiver/logger"
+	"XDMArchiver/utils"
 	"net/http"
 	"time"
 )

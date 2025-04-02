@@ -20,8 +20,8 @@ A CLI tool to archive direct messages from X (formerly Twitter), including all c
 ### Building from source
 
 ```sh
-git clone https://github.com/moalhaddar/dmarchiver.git
-cd dmarchiver
+git clone https://github.com/moalhaddar/XDMArchiver.git
+cd XDMArchiver
 go build
 ```
 

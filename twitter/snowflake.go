@@ -1,7 +1,7 @@
 package twitter
 
 import (
-	"dmarchiver/logger"
+	"XDMArchiver/logger"
 	"strconv"
 	"time"
 )

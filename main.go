@@ -1,9 +1,9 @@
 package main
 
 import (
-	"dmarchiver/dlmanager"
-	"dmarchiver/logger"
-	"dmarchiver/twitter"
+	"XDMArchiver/dlmanager"
+	"XDMArchiver/logger"
+	"XDMArchiver/twitter"
 	"flag"
 	"fmt"
 	"os"
@@ -36,7 +36,7 @@ func main() {
 	}
 
 	if conversationId == "" {
-		logger.MediaLogger.Fatal("Missing conversation-id argument. use --help flag to find out more.")
+		logger.MediaLogger.Fatal("Missing --conversation-id argument. use --help flag to find out more.")
 	}
 
 	twitterContext := twitter.InitTwitterContext(conversationId, authHeaderPath)

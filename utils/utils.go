@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"dmarchiver/logger"
+	"XDMArchiver/logger"
 	"fmt"
 	"os"
 	"strconv"

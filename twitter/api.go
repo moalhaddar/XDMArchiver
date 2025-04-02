@@ -1,9 +1,9 @@
 package twitter
 
 import (
+	"XDMArchiver/logger"
 	"bufio"
 	"bytes"
-	"dmarchiver/logger"
 	"encoding/json"
 	"fmt"
 	"io"

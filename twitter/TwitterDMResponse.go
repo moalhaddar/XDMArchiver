@@ -1,8 +1,8 @@
 package twitter
 
 import (
-	"dmarchiver/logger"
-	"dmarchiver/utils"
+	"XDMArchiver/logger"
+	"XDMArchiver/utils"
 )
 
 // Root structure for the entire response

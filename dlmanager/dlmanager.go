@@ -1,10 +1,10 @@
 package dlmanager
 
 import (
+	"XDMArchiver/logger"
+	"XDMArchiver/twitter"
+	"XDMArchiver/utils"
 	"bufio"
-	"dmarchiver/logger"
-	"dmarchiver/twitter"
-	"dmarchiver/utils"
 	"encoding/json"
 	"errors"
 	"flag"
