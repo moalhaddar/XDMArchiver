@@ -30,7 +30,7 @@ go build
 ## Usage
 
 ```sh
-./dmarchiver \
+./XDMArchiver \
   --auth-headers ./auth.txt \
   --conversation-id "6322615781-2112126499297904" \
   --debug
