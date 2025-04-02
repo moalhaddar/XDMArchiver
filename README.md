@@ -25,12 +25,14 @@ cd xdmarchiver
 go build
 ```
 
+### Or download the binaries from the releases.
+
 ## Usage
 
 ```sh
 ./XDMArchiver \
   --auth-headers ./auth.txt \
-  --conversation-id "6322615781-8712126499297904" \
+  --conversation-id "6322615781-2112126499297904" \
   --debug
 ```
 
@@ -66,7 +68,7 @@ Paste these into your auth.txt file in the format shown above.
 
 ## How It Works
 
-XDMArchiver operates by fetching conversation data, processing each message, fetching the media urls if any, downloading the media, saving the media and the messages to the file system. 
+XDMArchiver operates by fetching conversation data, processing each message, extracting the media urls from the conversation, downloading the media, saving the media and the messages to the file system. 
 
 All data is saved to the local filesystem in the following structure:
 
