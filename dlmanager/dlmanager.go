@@ -216,18 +216,12 @@ func (dlManager *DLManager) followTimestampChain(timestamp *string) int {
 	return iterations
 }
 
-func (dlManager *DLManager) setMinEntryIdAsMax() {
-	nextMaxEntry := dlManager.CurrentEvent.GetMinEntry().Message.Time
-	dlManager.MaxEntryId = &nextMaxEntry
-}
-
 func (dlManager *DLManager) setNextMaxEntryId() {
 	nextEntryTimestamp := dlManager.CurrentEvent.GetMaxEntry().Message.Time
 	iterations := dlManager.followTimestampChain(&nextEntryTimestamp)
 	if iterations == 0 {
 		logger.EventsLogger.Printf("\tZero iterations for %s\n", nextEntryTimestamp)
-		dlManager.setMinEntryIdAsMax()
-		return
+		nextEntryTimestamp = dlManager.CurrentEvent.GetMinEntry().Message.Time
 	}
 
 	t, err := utils.UnixTimestampStringToTime(nextEntryTimestamp, true)
@@ -315,10 +309,10 @@ func (dlManager *DLManager) downloadEvents() {
 			continue
 		}
 		dlManager.CurrentEvent = event
+		dlManager.setNextMaxEntryId()
 		dlManager.extractUrlsFromEvent(*event)
 		dlManager.saveCurrentEvent()
 		dlManager.printStats()
-		dlManager.setNextMaxEntryId()
 		logger.EventsLogger.Printf("\tNext max entry is %s\n", *dlManager.MaxEntryId)
 		logger.EventsLogger.Printf("\tNext max entry timestamp is %d\n", twitter.DecodeSnowflake(*dlManager.MaxEntryId).Timestamp.UnixMilli())
 
