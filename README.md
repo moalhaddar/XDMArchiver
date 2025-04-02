@@ -1,4 +1,4 @@
-# XDMArchiver
+# X DM Archiver
 
 A CLI tool to archive direct messages from X (formerly Twitter), including all conversation history, media attachments (photos and videos), and metadata.
 
@@ -20,8 +20,8 @@ A CLI tool to archive direct messages from X (formerly Twitter), including all c
 ### Building from source
 
 ```sh
-git clone https://github.com/username/xdmarchiver.git
-cd xdmarchiver
+git clone https://github.com/moalhaddar/dmarchiver.git
+cd dmarchiver
 go build
 ```
 
@@ -30,7 +30,7 @@ go build
 ## Usage
 
 ```sh
-./XDMArchiver \
+./dmarchiver \
   --auth-headers ./auth.txt \
   --conversation-id "6322615781-2112126499297904" \
   --debug
