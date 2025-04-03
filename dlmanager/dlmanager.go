@@ -24,6 +24,12 @@ type MediaUnit struct {
 	MediaType string
 }
 
+type Options struct {
+	IsDebug        bool
+	DownloadVideos bool
+	DownloadPhotos bool
+}
+
 type DLManager struct {
 	TwitterCtx     twitter.TwitterContext
 	ConversationId string
@@ -36,7 +42,7 @@ type DLManager struct {
 	Entries        []twitter.Entry
 	EntriesContMap map[string]string
 	MediaURLsQueue chan MediaUnit
-	IsDebug        bool
+	Options        Options
 }
 
 const (
@@ -47,18 +53,18 @@ const (
 	AT_END     = "AT_END"
 )
 
-func InitDLManager(conversationId string, twitterCtx twitter.TwitterContext, isDebug bool) (*DLManager, error) {
+func InitDLManager(ConversationId string, twitterCtx twitter.TwitterContext, options Options) (*DLManager, error) {
 	queue := make(chan MediaUnit, 256)
 	dlManager := DLManager{
 		TwitterCtx:     twitterCtx,
-		ConversationId: conversationId,
+		ConversationId: ConversationId,
 		MaxEntryId:     nil,
 		CurrentEvent:   nil,
 		MediaURLsQueue: queue,
-		IsDebug:        isDebug,
-		EventsPath:     filepath.Join(CONVER_DIR, conversationId, EVENTS_DIR),
-		PhotosPath:     filepath.Join(CONVER_DIR, conversationId, PHOTOS_DIR),
-		VideosPath:     filepath.Join(CONVER_DIR, conversationId, VIDEOS_DIR),
+		Options:        options,
+		EventsPath:     filepath.Join(CONVER_DIR, ConversationId, EVENTS_DIR),
+		PhotosPath:     filepath.Join(CONVER_DIR, ConversationId, PHOTOS_DIR),
+		VideosPath:     filepath.Join(CONVER_DIR, ConversationId, VIDEOS_DIR),
 		Events:         nil,
 		Entries:        nil,
 		EntriesContMap: nil,
@@ -207,7 +213,7 @@ func (dlManager *DLManager) followTimestampChain(timestamp *string) int {
 		if !exists || next == "" {
 			break
 		}
-		if dlManager.IsDebug {
+		if dlManager.Options.IsDebug {
 			logger.EventsLogger.Printf("\tFound message with id %s in data. Skipping to %s", *timestamp, next)
 		}
 		*timestamp = next
@@ -229,7 +235,7 @@ func (dlManager *DLManager) setNextMaxEntryId() {
 		logger.EventsLogger.Fatalf("Expected a non empty unix timestamp, got %s\n", nextEntryTimestamp)
 	}
 
-	if dlManager.IsDebug {
+	if dlManager.Options.IsDebug {
 		logger.EventsLogger.Printf("\tLatest timestamp is %s: %s\n", nextEntryTimestamp, t.Local().Format(time.DateTime))
 	}
 
@@ -246,27 +252,32 @@ func (dlManager *DLManager) extractUrlsFromEvent(event twitter.ConversationRespo
 	for _, entry := range event.GetEntries() {
 		if entry.Message.MessageData.Attachment != nil {
 			stamp, _ := utils.FormatUnixTimestamp(entry.Message.MessageData.Time, true)
-			vars := entry.Message.MessageData.Attachment.Video.VideoInfo.Variants
-			sort.Slice(vars, func(i, j int) bool {
-				return vars[i].Bitrate > vars[j].Bitrate
-			})
-			for _, v := range vars {
-				if v.ContentType == "video/mp4" {
-					urls = append(urls, MediaUnit{
-						URL:       v.URL,
-						Filename:  fmt.Sprintf("%s-%d.mp4", stamp, v.Bitrate),
-						MediaType: "Video",
-					})
-					break
+			if dlManager.Options.DownloadVideos {
+				vars := entry.Message.MessageData.Attachment.Video.VideoInfo.Variants
+				sort.Slice(vars, func(i, j int) bool {
+					return vars[i].Bitrate > vars[j].Bitrate
+				})
+				for _, v := range vars {
+					if v.ContentType == "video/mp4" {
+						urls = append(urls, MediaUnit{
+							URL:       v.URL,
+							Filename:  fmt.Sprintf("%s-%d.mp4", stamp, v.Bitrate),
+							MediaType: "Video",
+						})
+						break
+					}
 				}
 			}
-			photoUrl := entry.Message.MessageData.Attachment.Photo.MediaURLHTTPS
-			if photoUrl != "" {
-				urls = append(urls, MediaUnit{
-					URL:       photoUrl,
-					Filename:  fmt.Sprintf("%s.jpg\n", stamp),
-					MediaType: "Photo",
-				})
+
+			if dlManager.Options.DownloadPhotos {
+				photoUrl := entry.Message.MessageData.Attachment.Photo.MediaURLHTTPS
+				if photoUrl != "" {
+					urls = append(urls, MediaUnit{
+						URL:       photoUrl,
+						Filename:  fmt.Sprintf("%s.jpg\n", stamp),
+						MediaType: "Photo",
+					})
+				}
 			}
 		}
 	}
@@ -280,7 +291,7 @@ func (dlManager *DLManager) downloadEvents() {
 	reader := bufio.NewReader(os.Stdin)
 
 	for iteration := 0; ; iteration++ {
-		if dlManager.IsDebug {
+		if dlManager.Options.IsDebug {
 			logger.EventsLogger.Printf("Press any key to continue")
 			reader.ReadRune()
 		}

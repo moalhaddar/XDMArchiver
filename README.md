@@ -30,17 +30,31 @@ go build
 ## Usage
 
 ```sh
-./XDMArchiver \
-  --auth-headers ./auth.txt \
-  --conversation-id "6322615781-2112126499297904" \
-  --debug
+./XDMArchiver --conversation-id "154687269-1223525587627004904" --download-photos --download-videos
 ```
 
-### Parameters
+## Parameters
 
-- `--conversation-id` (required): The ID of the conversation to archive. You can find this in the URL when viewing DMs on X.com.
-- `--auth-headers` (default: `./auth.txt`): Path to a file containing authorization headers.
-- `--debug` (optional): Enable debug mode for additional logging and step-by-step execution.
+```sh
+Usage of XDMArchiver (version v1.0.0):
+        XDMArchiver --conversation-id [--auth-headers FILE] [--download-videos] [--download-photos] [--debug]
+  -auth-headers string
+        File path to authorization headers to be passed to each request
+        Headers are newline seperated, each header key value are colon seperated
+        Example file:
+                Cookie: ABCD
+                Content-Type: application/json (default "./auth.txt")
+  -conversation-id string
+        ID for the conversation to be downloaded
+  -debug
+        Enable debugging mode
+  -download-photos
+        To download photos in the conversation
+  -download-videos
+        To download videos in the conversation
+  -version
+        Display version information
+```
 
 ## Creating auth file
 
